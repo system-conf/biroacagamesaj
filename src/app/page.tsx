@@ -7,6 +7,18 @@ import { ref, push, serverTimestamp, onValue, query, orderByChild, equalTo } fro
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
+interface Message {
+  id: string;
+  text: string;
+  fileUrl: string;
+  fileType: string;
+  userId: string;
+  userEmail: string;
+  createdAt: number;
+  deliveryDate: string;
+  isLocked: boolean;
+}
+
 export default function Home() {
   const [user] = useAuthState(auth);
   const [message, setMessage] = useState('');
@@ -16,7 +28,7 @@ export default function Home() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
-  const [userMessages, setUserMessages] = useState<any[]>([]);
+  const [userMessages, setUserMessages] = useState<Message[]>([]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
@@ -35,10 +47,10 @@ export default function Home() {
       const userMessagesQuery = query(messagesRef, orderByChild('userId'), equalTo(user.uid));
       
       onValue(userMessagesQuery, (snapshot) => {
-        const messages: any[] = [];
+        const messages: Message[] = [];
         snapshot.forEach((childSnapshot) => {
           messages.push({
-            id: childSnapshot.key,
+            id: childSnapshot.key as string,
             ...childSnapshot.val()
           });
         });
