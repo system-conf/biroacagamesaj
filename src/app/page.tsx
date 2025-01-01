@@ -17,6 +17,7 @@ export default function Home() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [userMessages, setUserMessages] = useState<any[]>([]);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -96,7 +97,14 @@ export default function Home() {
     }
   };
 
-  const logout = () => signOut(auth);
+  const initiateLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false);
+    signOut(auth);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
@@ -191,7 +199,7 @@ export default function Home() {
                   </div>
                 </div>
                 <button
-                  onClick={logout}
+                  onClick={initiateLogout}
                   className="text-sm text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition-colors"
                 >
                   Çıkış Yap
@@ -403,6 +411,33 @@ export default function Home() {
                   )}
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm w-full">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Çıkış Yapmak İstiyor musunuz?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              Hesabınızdan çıkış yapmak istediğinizden emin misiniz?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 bg-gradient-to-r from-[#8B5CF6] via-[#6366F1] to-[#3B82F6] text-white rounded-lg hover:opacity-90 transition-all duration-300"
+              >
+                Çıkış Yap
+              </button>
             </div>
           </div>
         </div>
