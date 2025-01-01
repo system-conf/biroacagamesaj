@@ -30,6 +30,7 @@ export default function Home() {
   const [showMessages, setShowMessages] = useState(false);
   const [userMessages, setUserMessages] = useState<Message[]>([]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [truncatedEmail, setTruncatedEmail] = useState('');
 
   useEffect(() => {
     const checkMobile = () => {
@@ -58,6 +59,27 @@ export default function Home() {
       });
     }
   }, [user?.uid]);
+
+  useEffect(() => {
+    const handleEmailDisplay = () => {
+      if (user?.email) {
+        if (window.innerWidth <= 768) {
+          const [username, domain] = user.email.split('@');
+          if (username.length > 15) {
+            setTruncatedEmail(`${username.slice(0, 12)}...@${domain}`);
+          } else {
+            setTruncatedEmail(user.email);
+          }
+        } else {
+          setTruncatedEmail(user.email);
+        }
+      }
+    };
+
+    handleEmailDisplay();
+    window.addEventListener('resize', handleEmailDisplay);
+    return () => window.removeEventListener('resize', handleEmailDisplay);
+  }, [user?.email]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,12 +279,14 @@ export default function Home() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-300">Hoş geldin,</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{user.email}</p>
+                    <p className="font-medium text-gray-900 dark:text-white max-w-[200px] sm:max-w-none truncate">
+                      {truncatedEmail}
+                    </p>
                   </div>
                 </div>
                 <button
                   onClick={initiateLogout}
-                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+                  className="text-sm text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition-colors whitespace-nowrap ml-2"
                 >
                   Çıkış Yap
                 </button>
